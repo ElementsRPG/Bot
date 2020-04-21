@@ -1,5 +1,5 @@
 /*
- * CuddlegangBot - A bot fo the cuddlegang RPG server.
+ * CuddlegangBot - A bot for the cuddlegang RPG server.
  * Copyright © 2020 Jacob Frazier (shadowjacob1@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -50,6 +50,7 @@ public final class FormatterTest {
             Map.ofEntries(Map.entry("hello", "Hello"), Map.entry("world", "World"),
                 Map.entry("random", "random"))));
     // Too few.
-    Assert.assertEquals("Hello {world}.", Formatter.format("{hello} {world}.", Map.ofEntries(Map.entry("hello", "Hello"))));
+    Assert.assertEquals("Hello {world}.",
+        Formatter.format("{hello} {world}.", Map.ofEntries(Map.entry("hello", "Hello"))));
   }
 }
