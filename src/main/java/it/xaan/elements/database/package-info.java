@@ -1,5 +1,5 @@
 /*
- * CuddlegangBot - A bot for the cuddlegang RPG server.
+ * Elements - A bot for the Elements RPG server.
  * Copyright © 2020 Jacob Frazier (shadowjacob1@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify

@@ -1,5 +1,5 @@
 /*
- * CuddlegangBot - A bot for the cuddlegang RPG server.
+ * Elements - A bot for the Elements RPG server.
  * Copyright © 2020 Jacob Frazier (shadowjacob1@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -63,14 +63,6 @@ class Database(
     sql.apply(0)
 
   /**
-    * Executes arbitrary SQL. You should never be calling this unless you're xaanit.
-    *
-    * @param query The query to run.
-    * @return The SQL query.
-    */
-  def execute(query: String): SQL[Nothing, NoExtractor] = SQL(query)
-
-  /**
     * Initialises the tables for the classes marked as tables.
     */
   def initialise(): Unit =
@@ -108,11 +100,12 @@ class Database(
         // column override class
         val `type` = column match {
           case null => Database.postgresTypes(param.getType)
-          case _    => column.`override`() match {
-            case "" => Database.postgresTypes(column.clazz())
-            case _ => column.`override`()
-          }
-        }4
+          case _    =>
+            column.`override`() match {
+              case "" => Database.postgresTypes(column.clazz())
+              case _  => column.`override`()
+            }
+        }
 
         s"$name ${`type`} $extra"
       })
@@ -128,9 +121,18 @@ class Database(
 
     execute(tableQuery)
   }
+
+  /**
+    * Executes arbitrary SQL. You should never be calling this unless you're xaanit.
+    *
+    * @param query The query to run.
+    * @return The SQL query.
+    */
+  def execute(query: String): SQL[Nothing, NoExtractor] = SQL(query)
 }
 
 object Database {
+
   val postgresTypes: Map[Class[_], String] = Map(
     classOf[Int]     -> "SMALLINT",
     classOf[Boolean] -> "BOOLEAN",

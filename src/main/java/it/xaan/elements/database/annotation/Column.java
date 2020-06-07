@@ -1,5 +1,5 @@
 /*
- * CuddlegangBot - A bot for the cuddlegang RPG server.
+ * Elements - A bot for the Elements RPG server.
  * Copyright © 2020 Jacob Frazier (shadowjacob1@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,8 +39,10 @@ public @interface Column {
 
   /**
    * The {@link Class} that this column represents in Scala. See {@link
-   * it.xaan.elements.database.Database#postgresTypes()} for the mappings. This is for when you have a type in your POJO
-   * that differs from the postgres type. Like representing something as an enum in your code but an
+   * it.xaan.elements.database.Database#postgresTypes()} for the mappings. This is for when you have
+   * a type in your POJO
+   * that differs from the postgres type. Like representing something as an enum in your code but
+   * an
    * integer in your database. This must always be specified as it has no meaningful default that
    * java allows.
    *
