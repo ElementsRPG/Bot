@@ -15,15 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package it.xaan.cuddlegang.database;
+@ReturnTypesAreNonNullByDefault
+@ParametersAreNonnullByDefault
+package it.xaan.elements.database.annotation;
 
-import it.xaan.cuddlegang.util.Formatter;
-import org.jdbi.v3.core.Jdbi;
-
-public final class Postgres {
-  private final Jdbi backing;
-
-  public Postgres(final String host, final int port, final String database) {
-    this.backing = Jdbi.create(Formatter.format("jdbc:postgresql://{}:{}/{}", host, port, database));
-  }
-}
+import it.xaan.random.core.ReturnTypesAreNonNullByDefault;
+import javax.annotation.ParametersAreNonnullByDefault;

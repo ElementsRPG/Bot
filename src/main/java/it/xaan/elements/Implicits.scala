@@ -15,9 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-@ParametersAreNonnullByDefault
-@ReturnTypesAreNonNullByDefault
-package it.xaan.cuddlegang;
+package it.xaan.elements
 
-import it.xaan.random.core.ReturnTypesAreNonNullByDefault;
-import javax.annotation.ParametersAreNonnullByDefault;
+object Implicits {
+
+  implicit class AnyMapExtensions(val x: Map[String, Any]) extends AnyVal {
+    def boolean(y: String): Boolean = x(y).asInstanceOf[Boolean]
+    def char(y: String): Char       = x(y).asInstanceOf[Char]
+    def int(y: String): Int         = x(y).asInstanceOf[Int]
+    def long(y: String): Long       = x(y).asInstanceOf[Long]
+    def float(y: String): Float     = x(y).asInstanceOf[Float]
+    def short(y: String): Short     = x(y).asInstanceOf[Short]
+    def string(y: String): String   = x(y).asInstanceOf[String]
+    def double(y: String): Double   = x(y).asInstanceOf[Double]
+    def byte(y: String): Byte       = x(y).asInstanceOf[Byte]
+  }
+}

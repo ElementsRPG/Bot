@@ -15,9 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-@ReturnTypesAreNonNullByDefault
-@ParametersAreNonnullByDefault
-package it.xaan.cuddlegang.util;
+package it.xaan.elements.database.data
 
-import it.xaan.random.core.ReturnTypesAreNonNullByDefault;
-import javax.annotation.ParametersAreNonnullByDefault;
+import enumeratum._
+
+/**
+  * Represents an Element that a character has.
+  */
+sealed trait Element extends EnumEntry
+
+object Element extends Enum[Element] {
+  val values: IndexedSeq[Element] = findValues
+
+  case object Ice      extends Element
+  case object Water    extends Element
+  case object Fire     extends Element
+  case object Plague   extends Element
+  case object Earth    extends Element
+  case object Life     extends Element
+  case object Tempest  extends Element
+  case object Wind     extends Element
+  case object Darkness extends Element
+  case object Light    extends Element
+
+}

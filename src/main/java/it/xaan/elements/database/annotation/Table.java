@@ -15,9 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-@ReturnTypesAreNonNullByDefault
-@ParametersAreNonnullByDefault
-package it.xaan.cuddlegang.database;
+package it.xaan.elements.database.annotation;
 
-import it.xaan.random.core.ReturnTypesAreNonNullByDefault;
-import javax.annotation.ParametersAreNonnullByDefault;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Represents a table in your database.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Table {
+  String name();
+}
