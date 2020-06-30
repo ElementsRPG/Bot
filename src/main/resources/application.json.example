@@ -1,0 +1,11 @@
+{
+  "postgres_password": "",
+  "postgres_table": "postgres",
+  "postgres_username": "postgres"
+  "token": "",
+  "prefix": ""
+  "dev": false
+  "roles": {
+    "game-master": 0
+  }
+}

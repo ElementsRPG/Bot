@@ -15,19 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package it.xaan.elements.database.annotation;
+package it.xaan.elements.events
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import enumeratum._
 
-/**
- * Represents a table in your database.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Table {
-
-  String name();
+sealed trait Priority extends EnumEntry with Ordered[Priority] {
+  override def compare(that: Priority): Int = Priority.values.indexOf(this) - Priority.values.indexOf(that)
+}
+object Priority extends Enum[Priority] {
+  val values: IndexedSeq[Priority] = findValues
+  case object First    extends Priority
+  case object VeryHigh extends Priority
+  case object High     extends Priority
+  case object Normal   extends Priority
+  case object Low      extends Priority
+  case object VeryLow  extends Priority
+  case object Last     extends Priority
 }

@@ -69,5 +69,6 @@ fabric.properties
 .idea/
 /guilds/
 
+./src/main/resources/application.json
 
 .gradle/

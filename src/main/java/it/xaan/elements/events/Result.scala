@@ -15,9 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-@ParametersAreNonnullByDefault
-@ReturnTypesAreNonNullByDefault
-package it.xaan.elements;
+package it.xaan.elements.events
 
-import it.xaan.random.core.ReturnTypesAreNonNullByDefault;
-import javax.annotation.ParametersAreNonnullByDefault;
+import enumeratum._
+
+sealed trait Result[+T] extends EnumEntry
+object Result extends Enum[Result[_]] {
+  val values: IndexedSeq[Result[_]] = findValues
+
+  case class Success[+T](value: T) extends Result[T]
+  case object Failure              extends Result[Nothing]
+  case object Cancelled            extends Result[Nothing]
+}

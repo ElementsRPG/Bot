@@ -15,9 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-@ReturnTypesAreNonNullByDefault
-@ParametersAreNonnullByDefault
-package it.xaan.elements.database;
+package it.xaan.elements.events
 
-import it.xaan.random.core.ReturnTypesAreNonNullByDefault;
-import javax.annotation.ParametersAreNonnullByDefault;
+case class Dispatcher private (listeners: Seq[Listener[_]]) {
+  def dispatch(event: Event): Unit = {
+    var cancelled = false
+    listeners.foreach(_.receiveCast(event, cancelled) match {
+      case Result.Cancelled => cancelled = true
+      case _                => // ignored
+    })
+  }
+
+}
+
+object Dispatcher {
+  def apply(events: Seq[Listener[_]]): Dispatcher = new Dispatcher(events.sortBy(_.priority))
+}

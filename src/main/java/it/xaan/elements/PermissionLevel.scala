@@ -19,37 +19,48 @@ package it.xaan.elements
 
 import enumeratum._
 
-// TODO: Bitset maybe? I need a way to represent multiple 'roles'
 /**
   * Represents a user's permission level in the bot aka how much they can do.
   */
-sealed trait PermissionLevel extends EnumEntry
+sealed abstract class PermissionLevel(val _mask: Int) extends EnumEntry {
+  val mask: Int = 1 << _mask
+}
 
 case object PermissionLevel extends Enum[PermissionLevel] {
   val values: IndexedSeq[PermissionLevel] = findValues
 
+  def getPermissions(x: Int): Set[PermissionLevel] =
+    values.filter(perm => (x & perm.mask) != 0).toSet
+
+  @scala.annotation.tailrec
+  def getPermissionSet(perms: Set[PermissionLevel]): Int =
+    if (perms.contains(Root) && perms.size != values.length) getPermissionSet(values.toSet)
+    else if (!perms.contains(User)) getPermissionSet(perms + User)
+    else perms.foldLeft(0)(_ ^ _.mask)
+
   /**
-    * A standard user.
+    * A standard user. Everyone.
     */
-  case object User extends PermissionLevel
+  case object User extends PermissionLevel(1)
 
   /**
     * A discord admin, but not a game master.
     */
-  case object Admin extends PermissionLevel
+  case object Admin extends PermissionLevel(2)
 
   /**
     * A user who manipulates the game.
     */
-  case object GameMaster extends PermissionLevel
+  case object GameMaster extends PermissionLevel(3)
 
   /**
     * A bot developer.
     */
-  case object Developer extends PermissionLevel
+  case object Developer extends PermissionLevel(4)
 
   /**
     *  Full bot control
     */
-  case object Root extends PermissionLevel
+  case object Root extends PermissionLevel(5)
+
 }

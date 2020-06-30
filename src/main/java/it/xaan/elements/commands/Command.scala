@@ -15,9 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-@ReturnTypesAreNonNullByDefault
-@ParametersAreNonnullByDefault
-package it.xaan.elements.database.annotation;
+package it.xaan.elements.commands
 
-import it.xaan.random.core.ReturnTypesAreNonNullByDefault;
-import javax.annotation.ParametersAreNonnullByDefault;
+import it.xaan.elements.{PermissionLevel, Settings}
+import it.xaan.elements.PermissionLevel.User
+import it.xaan.elements.database.Postgres
+import net.dv8tion.jda.api.entities._
+
+abstract class Command[Failure, Success](
+    val name: String,
+    val aliases: Seq[String] = Seq(),
+    val permission: PermissionLevel = User
+)(
+    implicit val database: Postgres,
+    settings: Settings
+) {
+  def execute(
+      member: Member,
+      guild: Guild,
+      database: Postgres,
+      channel: TextChannel,
+      message: Message
+  ): Either[Failure, Success]
+}

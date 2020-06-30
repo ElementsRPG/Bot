@@ -1,7 +1,6 @@
 name := "Elements"
 version := "0.0.1"
-scalaVersion := "2.13.1"
-autoScalaLibrary := false
+scalaVersion := "2.13.2"
 description := "A bot for the elements RPG server."
 
 developers := List(
@@ -13,18 +12,20 @@ developers := List(
   )
 )
 
-resolvers ++= Seq(Resolver.JCenterRepository)
+resolvers ++= Seq(Resolver.JCenterRepository, "twitter-repo" at "http://maven.twttr.com")
 
 libraryDependencies ++= Seq(
-  "com.novocode"             % "junit-interface" % "0.11" % "test", // For sbt junit testing.
-  "junit"                    % "junit"           % "4.13" % "test", // For testing
-  "com.google.code.findbugs" % "jsr305"          % "3.0.2", // For the helpful annotations
-  "it.xaan"                  % "random-core"     % "1.0.2", // For the helpful annotation
-  "net.katsstuff"           %% "ackcord"         % "0.16.1", // For Discord stuff
-  "org.scalikejdbc"         %% "scalikejdbc"     % "3.4.2", // For accessing databases
-  "org.postgresql"           % "postgresql"      % "42.2.12", // For accessing postgres
-  "com.beachape"            %% "enumeratum"      % "1.6.1", // For enums
-  "org.reflections"          % "reflections"     % "0.9.12" // For nice reflections
+  "com.novocode"        % "junit-interface" % "0.11" % "test", // For sbt junit testing.
+  "junit"               % "junit"           % "4.13" % "test", // For testing
+  "it.xaan"             % "random-core"     % "1.0.2", // For the helpful annotation
+  "net.dv8tion"         % "JDA"             % "4.1.1_161", // For Discord stuff
+  "com.typesafe.slick" %% "slick"           % "3.3.2", // For accessing databases
+  "org.postgresql"      % "postgresql"      % "42.2.12", // For accessing postgres
+  "com.beachape"       %% "enumeratum"      % "1.6.1", // For enums
+  "org.reflections"     % "reflections"     % "0.9.12", // For nice reflections
+  "org.scala-lang"      % "scala-compiler"  % scalaVersion.value, // For eval
+  "org.scala-lang"      % "scala-reflect"   % "2.11.7", // For eval
+  "com.typesafe"        % "config"          % "1.4.0" // For config
 )
 
 testOptions += Tests.Argument(

@@ -17,6 +17,10 @@
  */
 package it.xaan.elements
 
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
+import scala.util.Try
+
 object Implicits {
 
   implicit class AnyMapExtensions(val x: Map[String, Any]) extends AnyVal {
@@ -29,5 +33,19 @@ object Implicits {
     def string(y: String): String   = x(y).asInstanceOf[String]
     def double(y: String): Double   = x(y).asInstanceOf[Double]
     def byte(y: String): Byte       = x(y).asInstanceOf[Byte]
+  }
+
+  implicit class TExtensions[T](val x: T) extends AnyVal {
+    def nil(other: T): T                         = if (x == null) other else x
+    def nil[U](mapper: T => U, other: U): U      = if (x == null) other else mapper(x)
+    def ?[U >: Null <: AnyRef](other: T => U): U = if (x == null) null else other(x)
+  }
+
+  implicit class FutureExtensions[T](val x: Future[T]) extends AnyVal {
+    def awaitOpt(duration: Duration = Duration.Inf): Option[T] = awaitTry(duration).toOption
+
+    def awaitTry(duration: Duration = Duration.Inf): Try[T] = Try(await(duration))
+
+    def await(duration: Duration = Duration.Inf): T = Await.result(x, duration)
   }
 }

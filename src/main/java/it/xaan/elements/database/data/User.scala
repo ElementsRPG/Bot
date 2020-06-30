@@ -15,18 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package it.xaan.elements.database.annotation;
+package it.xaan.elements.database.data
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import it.xaan.elements.PermissionLevel
+import slick.ast.BaseTypedType
+import slick.jdbc.JdbcType
+import slick.jdbc.PostgresProfile.api._
 
-/**
- * Tells the table creation to ignore a parameter that isn't intended to be serialised.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface Ignore {
+case class User(
+    permissions: Set[PermissionLevel],
+    id: Long
+) extends Tabled
 
+class UserTable(tag: Tag) extends Table[User](tag, "users") {
+
+  implicit val PermissionLevelMapper: JdbcType[Set[PermissionLevel]] with BaseTypedType[Set[PermissionLevel]] =
+    MappedColumnType.base[Set[PermissionLevel], Int](PermissionLevel.getPermissionSet, PermissionLevel.getPermissions)
+
+  override def * = (permissions, id).mapTo[User]
+
+  def permissions = column[Set[PermissionLevel]]("permissions")
+
+  def id = column[Long]("id", O.Unique, O.PrimaryKey)
 }
