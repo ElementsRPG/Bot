@@ -20,9 +20,10 @@ package it.xaan.elements
 import java.util
 
 import com.typesafe.config.ConfigFactory
-import it.xaan.elements.commands.{CommandHandler, Eval}
+import it.xaan.elements.commands.{CommandHandler, Eval, Ping, Roll}
 import it.xaan.elements.database.Postgres
 import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.requests.GatewayIntent
 
 object Main {
@@ -41,8 +42,8 @@ object Main {
           GatewayIntent.GUILD_MEMBERS
         )
       )
-      .addEventListeners(new CommandHandler(new Eval))
-
+      .addEventListeners(new CommandHandler(new Eval, Roll, Ping))
+      .setActivity(Activity.playing("lady jade is awesome"))
     jda.build().awaitReady()
   }
 

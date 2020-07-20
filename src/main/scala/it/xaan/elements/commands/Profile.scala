@@ -17,21 +17,12 @@
  */
 package it.xaan.elements.commands
 
-import it.xaan.elements.PermissionLevel.Root
 import it.xaan.elements.database.Postgres
-import it.xaan.elements.{Eval, Settings}
-import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.entities.{Guild, Member, Message, TextChannel}
+import it.xaan.elements.database.data.User
+import net.dv8tion.jda.api.entities.{Member, TextChannel}
 
-class Eval()(implicit override val database: Postgres, settings: Settings)
-    extends Command[Throwable, Any](name = "eval", permission = Root) {
-  override def execute(
-      member: Member,
-      guild: Guild,
-      database: Postgres,
-      channel: TextChannel,
-      message: Message
-  ): Either[Throwable, Any] =
-    Eval[Any](message.getContentRaw.split(" ").tail.mkString(" ")).toEither
-      .map(x => channel.sendMessage(new EmbedBuilder().setTitle("Result").setDescription(s"$x").build()).queue())
-}
+class Profile()(implicit database: Postgres)
+    extends Command[((TextChannel, Member), User)](
+      name = "profile",
+      arg = { event => database.getUser(event.getMember.getIdLong) }
+    )

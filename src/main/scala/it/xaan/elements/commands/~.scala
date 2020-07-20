@@ -17,24 +17,6 @@
  */
 package it.xaan.elements.commands
 
-import it.xaan.elements.{PermissionLevel, Settings}
-import it.xaan.elements.PermissionLevel.User
-import it.xaan.elements.database.Postgres
-import net.dv8tion.jda.api.entities._
-
-abstract class Command[Failure, Success](
-    val name: String,
-    val aliases: Seq[String] = Seq(),
-    val permission: PermissionLevel = User
-)(
-    implicit val database: Postgres,
-    settings: Settings
-) {
-  def execute(
-      member: Member,
-      guild: Guild,
-      database: Postgres,
-      channel: TextChannel,
-      message: Message
-  ): Either[Failure, Success]
+object ~ {
+  def unapply[H, T](t: (H, T)): Option[(H, T)] = Option(t)
 }
