@@ -17,12 +17,76 @@
  */
 package it.xaan.elements.commands
 
+import java.time.Instant
+
+import it.xaan.ap.common.data.ArgumentBuilder
+import it.xaan.ap.common.parsing.options.OptionsBuilder
+import it.xaan.ap.common.parsing.parsers.NamedParser
+import it.xaan.elements.Implicits.FutureExtensions
+import it.xaan.elements.Settings
 import it.xaan.elements.database.Postgres
 import it.xaan.elements.database.data.User
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.{Member, TextChannel}
 
-class Profile()(implicit database: Postgres)
-    extends Command[((TextChannel, Member), User)](
+class Profile()(implicit database: Postgres, parser: NamedParser, settings: Settings)
+    extends Command[((TextChannel, Option[User]), Option[Member])](
       name = "profile",
-      arg = { event => database.getUser(event.getMember.getIdLong) }
+      arg = { event =>
+        val content = event.getMessage.getContentRaw
+        import it.xaan.elements.commands.Command._
+        val userArg = new ArgumentBuilder[Long](CustomTypes.UserType).withName("user").build()
+        val parsed = parser
+          .parse(
+            Seq(
+              userArg
+            ),
+            content,
+            new OptionsBuilder().build()
+          )
+          .get()
+
+        val user = parsed.getOpt(userArg).orElse(event.getMember.getIdLong)
+
+        (
+          (event.getChannel, database.getUser(user).awaitOpt()),
+          Option(event.getGuild.getMemberById(user))
+        )
+      },
+      execute = {
+        case channel ~ user ~ tagged =>
+          user match {
+            case None =>
+              tagged match {
+                case Some(value) => channel.sendMessage(s"${value.getAsMention} doesn't have a profile.")
+                case None        => channel.sendMessage("That user does not exist.").queue()
+              }
+            case Some(user) =>
+              tagged match {
+                case None => database.delete(user)
+                case Some(tagged) =>
+                  val embed = new EmbedBuilder()
+                    .setAuthor(user.name, null, tagged.getUser.getEffectiveAvatarUrl)
+                    .setFooter(user.element.entryName, settings.elementPictures(user.element))
+                    .setThumbnail(settings.classPictures(user.clazz))
+                    .setTimestamp(Instant.now)
+                    .setTitle(user.subclass.entryName, "https://www.xaan.it/")
+                    .setDescription(s"""```scala
+                                       |Weapon:    "${user.weapon.getOrElse("None")}"
+                                       |Offhand:   "${user.offhand.getOrElse("None")}"
+                                       |Secondary: "${user.secondary.getOrElse("None")}"
+                                       |
+                                       |Armor:     "${user.armor.getOrElse("None")}"
+                                       |
+                                       |Finisher:  "${user.finisher.getOrElse("None")}"
+                                       |
+                                       |Gold:      ${user.gold}
+                                       |Pet:       "${user.pet.getOrElse("None")}"
+                                       |```
+                                       |""".stripMargin)
+
+                  channel.sendMessage(embed.build()).queue()
+              }
+          }
+      }
     )

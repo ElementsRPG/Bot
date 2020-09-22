@@ -5,7 +5,9 @@
   "token": "",
   "prefix": ""
   "dev": false
-  "roles": {
-    "game-master": 0
+  "roles": {},
+  "pictures": {
+     "classes": [],
+     "elements": []
   }
 }

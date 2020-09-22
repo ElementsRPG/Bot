@@ -17,24 +17,64 @@
  */
 package it.xaan.elements.database.data
 
-import it.xaan.elements.PermissionLevel
+import it.xaan.elements.database.Postgres
 import slick.ast.BaseTypedType
 import slick.jdbc.JdbcType
 import slick.jdbc.PostgresProfile.api._
 
 case class User(
     permissions: Set[PermissionLevel],
-    id: Long
-) extends Tabled
+    element: Element,
+    clazz: Class,
+    subclass: Subclass,
+    weaponID: Long,
+    offhandID: Long,
+    secondaryID: Long,
+    armorID: Long,
+    finisherID: Long,
+    gold: Long,
+    petID: Long,
+    id: Long,
+    name: String
+) {
+  // TOOD: ALL OF THESE
+  def weapon()(implicit database: Postgres): Option[Nothing]    = None
+  def offhand()(implicit database: Postgres): Option[Nothing]   = None
+  def secondary()(implicit database: Postgres): Option[Nothing] = None
+  def armor()(implicit database: Postgres): Option[Nothing]     = None
+  def finisher()(implicit database: Postgres): Option[Nothing]  = None
+  def pet()(implicit database: Postgres): Option[Nothing]       = None
+}
 
 class UserTable(tag: Tag) extends Table[User](tag, "users") {
 
   implicit val PermissionLevelMapper: JdbcType[Set[PermissionLevel]] with BaseTypedType[Set[PermissionLevel]] =
     MappedColumnType.base[Set[PermissionLevel], Int](PermissionLevel.getPermissionSet, PermissionLevel.getPermissions)
 
-  override def * = (permissions, id).mapTo[User]
+  implicit val ElementMapper: JdbcType[Element] with BaseTypedType[Element] =
+    MappedColumnType.base[Element, String](_.entryName, Element.withNameInsensitive)
+
+  implicit val ClassMapper: JdbcType[Class] with BaseTypedType[Class] =
+    MappedColumnType.base[Class, String](_.entryName, Class.withNameInsensitive)
+
+  implicit val SubclassMapper: JdbcType[Subclass] with BaseTypedType[Subclass] =
+    MappedColumnType.base[Subclass, String](_.entryName, Subclass.withNameInsensitive)
+
+  override def * =
+    (permissions, element, clazz, subclass, weapon, offhand, secondary, armor, finisher, gold, pet, id, name)
+      .mapTo[User]
 
   def permissions = column[Set[PermissionLevel]]("permissions")
-
-  def id = column[Long]("id", O.Unique, O.PrimaryKey)
+  def element     = column[Element]("element")
+  def clazz       = column[Class]("class")
+  def subclass    = column[Subclass]("subclass")
+  def weapon      = column[Long]("weapon")
+  def offhand     = column[Long]("offhand")
+  def secondary   = column[Long]("secondary")
+  def armor       = column[Long]("armor")
+  def finisher    = column[Long]("finisher")
+  def gold        = column[Long]("gold")
+  def pet         = column[Long]("pet")
+  def id          = column[Long]("id", O.Unique, O.PrimaryKey)
+  def name        = column[String]("name")
 }

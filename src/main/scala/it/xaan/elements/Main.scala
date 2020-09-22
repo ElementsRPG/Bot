@@ -20,7 +20,8 @@ package it.xaan.elements
 import java.util
 
 import com.typesafe.config.ConfigFactory
-import it.xaan.elements.commands.{CommandHandler, Eval, Ping, Roll}
+import it.xaan.ap.common.parsing.parsers.NamedParser
+import it.xaan.elements.commands.{CommandHandler, Eval, Ping, Profile, Roll, Test}
 import it.xaan.elements.database.Postgres
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
@@ -28,11 +29,11 @@ import net.dv8tion.jda.api.requests.GatewayIntent
 
 object Main {
 
-  implicit val config: Settings = new Settings(ConfigFactory.defaultApplication())
-
-  implicit val database: Postgres = new Postgres()
-
   def main(args: Array[String]): Unit = {
+    implicit val config: Settings    = new Settings(ConfigFactory.defaultApplication())
+    implicit val database: Postgres  = new Postgres()
+    implicit val parser: NamedParser = new NamedParser
+
     val token = config.token
     val jda = JDABuilder
       .create(
@@ -42,8 +43,7 @@ object Main {
           GatewayIntent.GUILD_MEMBERS
         )
       )
-      .addEventListeners(new CommandHandler(new Eval, Roll, Ping))
-      .setActivity(Activity.playing("lady jade is awesome"))
+      .addEventListeners(new CommandHandler(new Eval, Roll, Ping, new Profile(), new Test()))
     jda.build().awaitReady()
   }
 

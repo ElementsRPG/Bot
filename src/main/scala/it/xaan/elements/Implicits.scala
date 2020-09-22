@@ -17,22 +17,22 @@
  */
 package it.xaan.elements
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 import scala.util.Try
 
 object Implicits {
+  implicit class CollectionExtensions[T](val collection: java.util.Collection[T]) extends AnyVal {
+    private def getBuffer: ListBuffer[T] = {
+      val buffer = ListBuffer[T]()
+      collection.forEach(element => buffer.addOne(element))
+      buffer
+    }
 
-  implicit class AnyMapExtensions(val x: Map[String, Any]) extends AnyVal {
-    def boolean(y: String): Boolean = x(y).asInstanceOf[Boolean]
-    def char(y: String): Char       = x(y).asInstanceOf[Char]
-    def int(y: String): Int         = x(y).asInstanceOf[Int]
-    def long(y: String): Long       = x(y).asInstanceOf[Long]
-    def float(y: String): Float     = x(y).asInstanceOf[Float]
-    def short(y: String): Short     = x(y).asInstanceOf[Short]
-    def string(y: String): String   = x(y).asInstanceOf[String]
-    def double(y: String): Double   = x(y).asInstanceOf[Double]
-    def byte(y: String): Byte       = x(y).asInstanceOf[Byte]
+    def seq: Seq[T]   = getBuffer.toSeq
+    def list: List[T] = getBuffer.toList
+    def set: Set[T]   = getBuffer.toSet
   }
 
   implicit class TExtensions[T](val x: T) extends AnyVal {

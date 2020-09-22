@@ -22,7 +22,9 @@ import enumeratum._
 /**
   * Represents an Element that a character has.
   */
-sealed trait Element extends EnumEntry
+sealed trait Element extends EnumEntry {
+  def subclasses: Seq[Subclass] = Subclass.values.filter(_.element == this)
+}
 
 object Element extends Enum[Element] {
   val values: IndexedSeq[Element] = findValues
@@ -37,5 +39,5 @@ object Element extends Enum[Element] {
   case object Wind     extends Element
   case object Darkness extends Element
   case object Light    extends Element
-
+  case object None     extends Element
 }

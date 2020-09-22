@@ -25,7 +25,7 @@ import scala.util.Try
 /**
   * Evaluates scala code.
   */
-object Eval {
+object EvalWrapper {
 
   final private val primitives = Seq[Class[_]](
     classOf[Int],

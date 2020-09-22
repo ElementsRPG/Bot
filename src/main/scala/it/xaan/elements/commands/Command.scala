@@ -17,11 +17,13 @@
  */
 package it.xaan.elements.commands
 
+import java.util
+
 import it.xaan.ap.common.data.Argument
 import it.xaan.ap.common.data.parsed.ParsedNameAguments
-import it.xaan.elements.PermissionLevel
-import it.xaan.elements.PermissionLevel.User
 import it.xaan.elements.commands.Command.Arg
+import it.xaan.elements.database.data.PermissionLevel
+import it.xaan.elements.database.data.PermissionLevel.User
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 abstract class Command[T](
@@ -40,5 +42,11 @@ object Command {
 
   implicit class Extensions[T](val argument: Argument[T]) extends AnyVal {
     def extract()(implicit parsed: ParsedNameAguments): T = parsed.get(argument)
+  }
+
+  implicit def toJavaList[T](list: Seq[T]): java.util.Collection[T] = {
+    val res = new util.ArrayList[T]()
+    list.foreach(res.add)
+    res
   }
 }

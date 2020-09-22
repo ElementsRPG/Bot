@@ -17,13 +17,15 @@
  */
 package it.xaan.elements.commands
 
+import java.util.NoSuchElementException
+
 import it.xaan.elements.Settings
 import it.xaan.elements.database.Postgres
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 /**
   * Represents
@@ -54,10 +56,18 @@ class CommandHandler(initial: Command[_]*)(implicit val database: Postgres, sett
       database
         .getUser(member.getIdLong)
         .onComplete {
-          case Failure(exception) => exception.printStackTrace()
+          case Failure(exception) =>
+            exception.printStackTrace()
           case Success(user) =>
+            println(
+              s"User ${member.getEffectiveName} is trying to execute ${command.name} that requires permission ${command.permission} while they only have ${user.permissions}"
+            )
             if (user.permissions.contains(command.permission)) {
-              command.executeCast(command.arg(event))
+              println("executing")
+              Try(command.executeCast(command.arg(event))) match {
+                case Failure(exception) => exception.printStackTrace()
+                case Success(value)     => // Ignore
+              }
             }
         }(ExecutionContext.global)
     }

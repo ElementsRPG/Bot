@@ -15,6 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package it.xaan.elements.database.data
+package it.xaan.elements.commands
 
-trait Tabled
+import it.xaan.ap.common.parsing.{Filter, Type}
+
+object CustomTypes {
+  // Regex
+  private val UserTypeRegex = "\\s*(\\d+|<@!?\\d+>)"
+
+  // Types
+  implicit val UserType: Type[Long] = new Type[Long](
+    _.matches(UserTypeRegex),
+    _.replaceAll("[<@!>]", "").toLong,
+    UserTypeRegex,
+    classOf[Long],
+    Filter.TRIM_NEWLINES,
+    Filter.TRIM_SPACES
+  )
+}

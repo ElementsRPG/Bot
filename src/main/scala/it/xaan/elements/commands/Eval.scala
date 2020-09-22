@@ -17,26 +17,30 @@
  */
 package it.xaan.elements.commands
 
-import it.xaan.elements.PermissionLevel.Root
+import it.xaan.elements.Settings
 import it.xaan.elements.database.Postgres
+import it.xaan.elements.database.data.PermissionLevel.Root
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.{Guild, Member, Message, TextChannel}
 
-case class Eval()(implicit database: Postgres)
+import scala.util.Try
+
+case class Eval()(implicit database: Postgres, settings: Settings)
     extends Command[(((Guild, Member), Message), TextChannel)](
       name = "eval",
       permission = Root,
       arg = { event => (((event.getGuild, event.getMember), event.getMessage), event.getChannel) },
       execute = {
         case guild ~ member ~ message ~ channel =>
-          val result = it.xaan.elements.Eval[Any](
+          val result: Try[Any] = it.xaan.elements.EvalWrapper(
             message.getContentRaw.split(" ", 2).last,
             Map(
               "member"   -> member,
               "guild"    -> guild,
               "database" -> database,
               "channel"  -> channel,
-              "message"  -> message
+              "message"  -> message,
+              "settings" -> settings
             )
           )
           channel.sendMessage(new EmbedBuilder().setTitle("Result").setDescription(s"${result.get}").build()).queue()

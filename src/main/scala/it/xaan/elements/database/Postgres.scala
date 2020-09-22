@@ -39,8 +39,7 @@ class Postgres()(implicit settings: Settings, context: ExecutionContextExecutor 
   import it.xaan.elements.database.Postgres._
 
   private val setup =
-    Profiles.schema.createIfNotExists >>
-      Users.schema.createIfNotExists
+    Users.schema.createIfNotExists
 
   db.run(setup)
 
@@ -52,26 +51,18 @@ class Postgres()(implicit settings: Settings, context: ExecutionContextExecutor 
         .head
     )
 
-  def getUsers(
-      ids: Set[Long]
-  ): Future[Seq[User]] =
-    db.run(Users.filter(_.id inSet ids).result)
+  def getUsers(ids: Set[Long]): Future[Seq[User]] = db.run(Users.filter(_.id inSet ids).result)
 
-  def save(element: Tabled): Future[Boolean] =
-    db.run(element match {
-      case profile: Profile => Profiles.insertOrUpdate(profile)
-      case user: User       => Users.insertOrUpdate(user)
-    }).map(_ > 0)
+  def save(user: User): Future[Int] =
+    db.run(Users.insertOrUpdate(user))
 
-  def delete(element: Tabled): Future[Boolean] =
-    db.run(element match {
-      case profile: Profile => Profiles.filter(_.id === profile.id).delete
-      case user: User       => Users.filter(_.id === user.id).delete
-    }).map(_ > 0)
+  def delete(user: User): Future[Boolean] =
+    db.run(Users.filter(_.id === user.id).delete).map(_ > 0)
+
+  def execute[T](dbio: DBIO[T]): Future[T] = db.run(dbio)
 
 }
 
 object Postgres {
-  val Profiles = TableQuery[ProfileTable]
-  val Users    = TableQuery[UserTable]
+  val Users = TableQuery[UserTable]
 }

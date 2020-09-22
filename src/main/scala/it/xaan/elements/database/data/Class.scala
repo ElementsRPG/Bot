@@ -21,9 +21,7 @@ import java.io.InputStream
 
 import enumeratum._
 
-sealed abstract class Class extends EnumEntry {
-  def resource(): InputStream = getClass.getResourceAsStream(s"/profile/classes/${getClass.getName}.png")
-}
+sealed trait Class extends EnumEntry
 
 object Class extends Enum[Class] {
   val values: IndexedSeq[Class] = findValues
@@ -32,4 +30,5 @@ object Class extends Enum[Class] {
   case object Warrior extends Class
   case object Mage    extends Class
   case object Archer  extends Class
+  case object None    extends Class
 }
